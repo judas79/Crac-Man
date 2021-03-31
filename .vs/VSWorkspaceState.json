@@ -1,11 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Crac-Man",
     "\\Crac-Man\\Assets",
-    "\\Crac-Man\\Assets\\Scripts",
-    "\\Crac-Man\\MsPacmanImages\\MsPacmanImages"
+    "\\Crac-Man\\Assets\\Scripts"
   ],
-  "SelectedNode": "\\Crac-Man\\Assets\\Scripts\\junk.cs",
+  "SelectedNode": "\\Tutorial 17 windows compiled game",
   "PreviewInSolutionExplorer": false
 }

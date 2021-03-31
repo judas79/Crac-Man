@@ -1,0 +1,104 @@
+How to Make Video Games 17 : Make Ms. Pac-Man
+https://www.youtube.com/watch?v=2PPE0eZEbJ8&list=PLGLfVvz_LVvSYnwKyw9xP5tEn7GSUWwZJ&index=18
+
+You asked for it, and now here it is a Ms. Pac-man Clone! In this specific video I’ll cover how to draw all the sprite assets in Gimp
+including the Ghosts, Ms. Pac-Man, GameBoard, Dots, etc. Then we’ll cover how to create a pixel precise grid layout, setup our project, 
+create sprite sheets, create animations, sorting layers, and so much more! Understanding how grid based games work will dramatically 
+increase the number of games you can make.
+http://www.newthinktank.com/2017/08/make-video-games-17/
+
+You can get all the images here.
+http://www.newthinktank.com/wordpress/MsPacmanImages.zip
+
+After downloading the images, linked above, and changing them in gimp, we start by making all the folders,
+for Assets, in the Unity app.
+Change sample scene name to SampleScene
+Then we drag all our assets, into thier coorisponding folders, in the Assets folder.
+Change sample camera name to MainCamera, and settings to:
+Position x: 13
+Position y:14.5
+Position z:-1
+Scale x y : 1
+Background : blue
+size: 16
+
+Put GridGB, in ou hierarchy, and setting:
+position x : 13
+position y : 14.5
+scale : 1
+
+SpriteSheet setting:
+SpriteMode : Multiple
+Pixels per unit : 16
+Filter Mode : Point
+
+Then press sprite editor:
+type : grid by cell size
+16x 16
+slice
+apply.
+
+SpriteSheet 16 -19 drag into Scene window, rename MsPacman.
+Make an animation named MsPacman, save in Animations folder.
+MsPacman settings:
+Position x : 14.5
+Position y : 6.5
+scale 1.2
+
+add  sorting layer, name it MsPacman, thhen:
+sorting layer : MsPacman
+In anaimations click MsPacman, then in animator editor, click orange blob and set speed to .3.
+
+Drag both Dot sprites, that are dots, into hierarchy and save in animation folder as Dots
+Create prefab out of Dot.
+Create Empty in hierarchy rename to Dots, put Dot in Dots
+In animations click Dots hightlight orange blob and set speed to .3.
+
+Drag you horizontal pill into hierarchy, then make it into a prefab.
+Delete the sprite of pill in hierarchy and drag the prefab pill, into hierarchy.
+rename it to HorzPill
+
+Create Empty, then rename it to, PillsHoriz, then drag HorzPill into it.
+
+Set PillsHoriz: (the folder)
+position x = -.5
+position y = -.5
+
+Do the same for VertPill, using the vertical pill sprite.
+Create empty name PillsVert and drag VertPill into it.
+
+Set VwerPills:  (the folder)
+position x = -.5
+position y = -.5
+
+Start plotting the first HorzPill in settings:
+Position x = 1
+Position y = 1
+Then make duplicates to fill the horizontal pathways within GridGB, to the end of the first row,
+then copy and paste the copy within the PillsHoriz, to fill all the rows, and delete the ones, that lie within walls.
+
+Start plotting the first VertPill in settings:
+Position x = 1
+Position y = 2
+Then work your way up vetically to fill all the vertical paths within GridGB as you did with the HorzPill, duplicate copies.
+
+Next make thre duplicates of the Dot, Settings for them:
+color = yellow...
+
+Dot:
+Position x = 1
+Position y = 7
+
+Dot(1):
+Position x = 26
+Position y = 7
+
+Dot(20:
+Position x = 1
+Position y = 27
+
+Dot(3):
+Position x = 26
+Position y = 27
+
+Delete the pills at these coordinates, where the dots go.
