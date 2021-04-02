@@ -1,0 +1,100 @@
+How to Make a Video Game 18
+https://www.youtube.com/watch?v=YtVaV2Y7Mlg&list=PLGLfVvz_LVvSYnwKyw9xP5tEn7GSUWwZJ&index=19
+
+In the next 2 videos I’ll cover how to lock Ms. Pac-Man perfectly inside of the maze as she moves around. 
+We will do this not through colliders, but instead by using pivot points, which will make the movement very
+clean and also resource light. We’ll cover how to Setup Pivot Points, Putting GameObjects in an Array, 
+Selecting GameObjects in Code, Cycling through GameObjects in Empties, Moving Ms. Pac-Man, Animating Ms. 
+Pac-Man and much more.
+http://www.newthinktank.com/2017/08/make-video-games-18/
+
+Images are here:
+http://www.newthinktank.com/wordpress/MsPacmanImages.zip
+
+******************************************* folders tags, Point, misc.*******************************************
+
+First we will create empty in hierarchy and name it, Turningpoints.
+The reason we use Points instead of colliders, is that colliders would not be smooth, as turning points are.
+Within Turningpoints we will create another create empty and name it Point.
+In the Point settings, pick a color from the top, cube picture with dropdown,so yu can see the circle around the empty Points,
+you are about to duplicate.
+But first add a circle collider 2d to your Point, as to see the circle, also you can highten the radius, then return it to ,1 when finished,
+if you don't see your Point.
+Start your first point at:
+position x = 1
+position y = 1
+Work your way to the top by duplicating your point, for each place the pacman character can turn at (66 places);  see image included.
+
+Next, one set at a time, create a tag for:
+Point for all your Point (s)
+Dot   "        "
+Pill both PillVert (s) and PillHorz (s)
+MsPacman
+
+
+************************************ TurningPoint ***************************************
+
+
+Next we will create a TurningPoint script and continue our notes in VS....
+
+After returning from VS, we will select all of our Point(s) in TruningPoints, then drag our TurningPoint script into the settings,
+so all the Points have the script within them.
+Within the setting of the script, notic is has a field named size.  This size will contain the nearest turningpoints, to the turning point your are currently at.
+We will now select the first turningpoint at 
+position x = 1,
+position y = 1,
+There are only two interse@cting turning points in this ones vicinity, in a linear pathway, one above it and one to the right.
+
+   @ <- Point 1
+||    |										|
+||	  |_____________________________________|
+|| @ <-current possition                  @<- Point 2
+||==========================================
+
+
+You have two points that have the potential of being the next point, dependant on weather the user goes up or right.
+So, in size, enter 2, then click enter, and two fields will open up under the size field.
+While the current position is selected, drag the Point 2, from hierarchy, into one of the fields, created by the size.
+Next, hilight point 2 and add the former(current position), the Point that is above it, and the next Point, that is encoutered, to its right.
+Do that for them all (66 Point total).
+
+Add a circle collider 2d, and setting:
+is Triggered : checked
+
+
+***************************************** MsPacman ************************************
+
+create a script named MsPacman, and attach it to the MsPacman object.
+Add a Rigidbody 2d, settings:
+collision detection = continuous
+Constaints freeze z checked
+
+create cirlcle collider 2d, settings
+Radius .46
+is Triggered : checked   (so when it hits a turning Point it reacts to it)
+
+
+************************************** Gameboard **********************************************
+
+Create script named, Gameboard, and attach it to the GridGB object.
+This handle the array setup, to hold  all the turning points in the game, double click and continue notes in VS...
+
+After returning from VS, where we created the code to put all ourpoints, and their positions, into the array,
+we will continue by setting up our TurningPoint script.
+
+
+********************************** TurningPoint Script *************************************
+
+After finishing the Gameboard script, we will continue in our Turningpoint script,
+so continue notes in VS...
+
+Returned.... then MsPacman script
+
+***************************************MsPacman script **************************************
+
+After returning from TurningPoint script, we will resume in the MsPacman script,
+with notes and code in VS....
+
+After returning, your MsPacman should be able to go in all four directions,
+but not respect bounderies, or stop at the boundery borders.
+Run it in Unity and confirm that its working.
