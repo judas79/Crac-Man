@@ -98,3 +98,15 @@ with notes and code in VS....
 After returning, your MsPacman should be able to go in all four directions,
 but not respect bounderies, or stop at the boundery borders.
 Run it in Unity and confirm that its working.
+
+
+
+
+
+
+
+
+
+
+
+

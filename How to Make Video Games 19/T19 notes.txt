@@ -1,0 +1,58 @@
+How to Make a Video Game 19
+https://www.youtube.com/watch?v=GbjaQihr5RM&list=PLGLfVvz_LVvSYnwKyw9xP5tEn7GSUWwZJ&index=19
+
+In this video I finish setting up the system that will allow Ms. Pac-Man to perfectly travel through the maze. 
+We’ll cover how to calculate if Ms. Pac-Man can Move in Certain Dirctions, Working with GameObjects in an Array, 
+Keeping Ms. Pac-Man from Getting Stuck, Simulating Hitting Walls, Animating, Changing Ms. 
+Pac-Man’s Direction without Pivot Points and more.
+http://www.newthinktank.com/2017/08/make-video-games-19/
+
+All of the images are here and the code follows the video below. 
+http://www.newthinktank.com/wordpress/MsPacmanImages.zip
+
+
+First, we will launch our MsPacman Script, by double clicking it in Unity, to open in VS,
+and continue writing code, to move MsPacman, only within the bounderies of the pacman maze.
+So continue notes there, starting in the fixed update function...
+
+T19 location at 9:45
+After returning from tryin the code out, we will next work on, keeping MsPacman centered within the maze bounderies.
+We will do this by setting the position of mspacman, every time it moves.
+Being center, also ensures that MsPacman always starts on a 'snaps to pivot point' Turning point,
+or she could get locked in a bad position, inside the game.
+We will do this before we change the velocity, in the code area.
+Resume in VS, with code an notes within MsPacman script...
+
+after returning, verify it works.
+
+Next, we will have Mspacman stop when she hits a wall.
+Verify MsPacman has a circleCollider 2d on her.
+Trigger is checked; 'set'
+Tagged as MsPacman
+And also verify that all the Points have a circleCollider 2d,
+Trigger is set
+Radius = .1
+
+T19 location at 12:45
+We will use the triggers when MsPacman hits a Point, to stop her, using OnTriggerEnter2d.
+So, lets resume inside of VS, at the bottom of the MsPacman, creating the function; OnTriggerEnter2d.
+
+After returning verify that mspacman stops when she hits a turningPoint Point.
+If you hit the key she will continue through the wall.
+
+T19 location at 16:40
+We will continue by freezing mspacmans mouth or nose from movinge, when she stops.
+Continue in VS MsPacman.cs, with notes...
+
+after returning from creating our property 'public Sprite pausedSprite;' in MsPacman.cs,
+we will drag our MsPacman sprite into the new public 'pausedSprite' field.
+'SpriteSheet_18 in the tutorial.
+Then return to the MsPacman.cs code, to the bottom of our script in, to create the function in vs...
+
+After returning, verify it works in Unity.
+
+T19 location at 20:00
+Next, we will make it, so that the MsPacman can switch to the opposite direction, 
+even if she is not on a turning point.
+Continue in fixeUpdate, in the MsPacman.cs in VS....
+

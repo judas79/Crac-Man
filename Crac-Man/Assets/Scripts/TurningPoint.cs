@@ -25,7 +25,6 @@ public class TurningPoint : MonoBehaviour
 
         for (int i = 0; i < nextPoints.Length; i++)
         {
-
             // Get each point so we can find its position
             // in relation to the current TurningPoint
             TurningPoint nextPoint = nextPoints[i];
