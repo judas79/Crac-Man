@@ -1,0 +1,180 @@
+How to Make a Video Game 20 : Make Pac-Man 4
+
+https://www.youtube.com/watch?v=B1XZ-ILuMJs&lc=Ugx__CVnAl0PfheDSEd4AaABAg.9Cn-U5D417d9LpxaEuGYMF
+
+In this tutorial we continue making Ms. Pac-Man. This time we will Find out How to use Multiple Audio Sources, 
+Set up Sound Effects, Allow Ms. Pac-Man to Eat Dots, Set up the Interface, Update Scores when She Eats Dot and a whole lot more.
+
+http://www.newthinktank.com/2017/08/make-video-games-20/
+
+All of the images used are here. The code follows the video below. You can also Download all of my Unity game files so far for Pong, 
+Space Invaders, Tetris and Mario.
+
+http://www.newthinktank.com/2018/04/make-video-games-15/
+
+
+******************************** SoundManager ***********************************
+
+
+First, we will create our SoundManager.
+In hierarchy, create Empty, rename to SoundManager.
+Withh SoundManager selected, go into settings area, in Add Component, choose, audio, then Audio source.
+Do this two more times, to have a total of 3 audio sources. 
+One will be pacman eating the second ghosts moving, and the third, oneShotSoundClip.
+
+Drag the sound file from folder, into the Asset/Sounds folder in Unity.
+EatingDots or, I used SniffingDots, for my version.
+EatingGhosts
+GhostMove
+PacmanDies
+PowerUpEating
+
+We will drag, EatingDots or, SniffingDots, into the first Audio Source, that we just created,
+into the AudioClip field, from our Sound folder.
+Then GhostMove into the second one, in the AudioClip field.
+Leave the third ones AudioClip field empty.  This will be used to oneShotSoundClip, which we will setup later.
+In the 2nd and 3rd ones settings:
+Play on Awake = unchecked
+
+Next, create a script, and name it SoundManager.
+Double click SoundManager to resume code and notes within VS...
+
+After saving, and returning from setting up our Audio players for ghost, pacman and other sounds,
+we will revisit the MsPacman script.
+We will verify the sounds in Unitiy, to test if it works, later on.
+
+
+******************************* Sounds in MsPacman script and Unity ***************************
+
+
+Next, we will continue, in VS, by first adding a library to our MsPacman.cs.
+Continue with notes in VS, MsPacman.cs....
+Library to use the scoring UI
+using UnityEngine.UI;
+
+After setting up the ghost and pacman eating (sniffing) dots sound, we will now try it out,
+in Unity.
+
+It didn't work because we didn't finish setting up the sounds, in Unity.
+
+First, select MsPacman and in settings/ MsPacman script, drag the corresponding sounds,
+into thier fields, from the Sounds folder:
+EatingGhost
+PacmanDies
+Powerup Eating
+
+Also, select your SoundManager, then drag your SoundManager script into its settings.
+
+Then Drag all the cooresponding sounds into thier fields, in the SoundManager Script.
+Eating, or Sniffing dots
+Eating Ghosts
+Ghost Move
+Pacman Dies
+Powerup Eating
+
+Now run your game in Unity to verify that it is working and sounding, properly.
+MsPacman should make sounds when it moves, and stop making them when she stops.
+
+
+
+******************************* setup score UI **********************************
+
+
+Next, in the Unity hierarchy, Create a UI text, and rename it to Score.
+Next, setup the canvas that was created, when we created the UI text, to the same position x / y,
+as our camera:
+Canvas settings:
+Render Mode = WorldSpace
+Position x = 13.
+position y = 14.5
+width = 40
+height = 36
+
+Next, select the MainCamera and in Settings:
+Size = 18
+This will put some more space up at the top of the scene area, for us to put the,
+Score on.
+
+Next, in hierarchy, select Score, and change settings to:
+Position x = 1.
+position y = 16
+width = 40
+heigth = 36
+Text = 0
+Font style = bold
+color = 'white'
+Scale x/y  = .07
+Font Size = 22
+Alignment : 'Centered'
+
+Run it to verify the Score text looks good and clear.
+
+
+******************************** setup Pills *********************************
+
+I reversed the naming for the dots and the pills, accidently, so the so called Dots are named Pills,
+and the Pills are named Dots. Woops!
+
+In Unity, select all the Pills object folders and put a check by Pills in the inspector, so they show up,
+in the scene screen.
+Next, Select all the individual pills, in both the PillsHorz and PillsVert folders.
+If the folders themselves are selected, unselect them by using ctrl and click, then
+and add a boxcollider 2d to them.
+Zoom in on them and shrink down the Size of the boxcollider 2ds, so they just cover the outside of the pills.
+I will leave the Edge radius the same, for now, because the vertical pill are long and the horrizontal ones are wide.
+Check : is Trigger
+
+If you are doing my version of MsPacman (mine is Crac-Man)
+Select all  the VertPill(s), and in thier BoxCollider setting set:
+Size x = .6
+Size y = .4
+
+Select all  the HorizPill(s), and in thier BoxCollider setting set:
+Size x = .4
+Size y = .6
+
+The MsPacman version uses a circleCollider 2d, and sets the radius to .7 for all.
+
+So we can get points, when trigger calls it, as they are eaten, and the game will work as intended.
+
+Next, Open the MsPacman script in VS and we will continue with out notes there...
+
+Changes made because Dots and Pills names where reversly named.
+
+// within the OnTriggerEnter2D(Collider2D col) function
+// T20 If Pac-Man hit a Pill
+        if (col.gameObject.tag == "Pill")
+        {
+            // call function and pass in the pill MsPacman collided with
+            APillWasEaten(col);
+        }
+
+
+//function
+// T20 When a Pill object was collided with
+    void APillWasEaten(Collider2D col)
+    {
+        // call another function to increase the score
+        IncreaseTextUIScore();
+
+        // destroy the game object pill MsPacman collided with
+        Destroy(col.gameObject);
+    }
+
+
+// function
+// T20 increase the score when a pill is collided with 'eaten'  'sniffed up'
+    void IncreaseTextUIScore()
+    {
+        // find the score UI component
+        Text textUIComp = GameObject.Find("Score").GetComponent<Text>();
+
+        // get the string stored inside of the Score and convert it to int
+        int score = int.Parse(textUIComp.text);
+
+        // increment the score
+        score += 10;
+
+        // resave the updated score in the textUIComp score string
+        textUIComp.text = score.ToString();
+    }

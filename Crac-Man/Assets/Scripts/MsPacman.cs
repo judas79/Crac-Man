@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 // T18 get system library, Used to find out if Pac-Man hits a wall
 using System;
+// T20 Library to use the scoring UI interface
+using UnityEngine.UI;
 
 public class MsPacman : MonoBehaviour
 {
@@ -12,10 +14,18 @@ public class MsPacman : MonoBehaviour
     // T18 move mrspacman using rigidbody 2d
     private Rigidbody2D rb;
 
-    // 5. Sprite used when Pac-Man is paused, to stop the sprite; 
+    // T19 Sprite used when Pac-Man is paused, to stop the sprite; 
     // stop the animation from moving, at a selected single sprite image
     // public so we can drag selected single sprite into our script, to use for this purpose
     public Sprite pausedSprite;
+
+    // T20 Get reference to the SoundManager, for its sound functions, from inside of here
+    SoundManager soundManager;
+
+    // T20 get refrences from within SoundManager, for our sound clips, we will use here
+    public AudioClip eatingGhost;
+    public AudioClip pacmanDies;
+    public AudioClip powerupEating;
 
     // T18 awake function, to create component(s) before they are to be used
     private void Awake()
@@ -28,6 +38,10 @@ public class MsPacman : MonoBehaviour
     void Start()
     {
         rb.velocity = new Vector2(-1, 0) * speed;
+
+        // T20 get reference, to be able to use, our SoundManager, from within here
+        // find the name soundManager by finding GameObject, SoundManager
+        soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
     }
 
 
@@ -386,6 +400,13 @@ public class MsPacman : MonoBehaviour
                 rb.velocity = Vector2.zero;
             }              
         }
+
+        // T20 If Pac-Man hit a Pill
+        if (col.gameObject.tag == "Pill")
+        {
+            // call function and pass in the pill MsPacman collided with
+            APillWasEaten(col);
+        }
     }
 
     // T19 When Pac-Man hits a wall the animation will stop, and so will the animation itself
@@ -399,12 +420,46 @@ public class MsPacman : MonoBehaviour
             // then get the sprite renderer and render our stopped sprite
             GetComponent<Animator>().enabled = false;
             GetComponent<SpriteRenderer>().sprite = pausedSprite;
+
+            // T20 Pause Pac-Man eating sound, when MsPacman stops
+            soundManager.PausePacman();
         }
         else
         {
             // otherwise keep the animation moving
             GetComponent<Animator>().enabled = true;
-        }
+
+            // T20 Unpause Pac-Man eating sound, when he is moving again
+            soundManager.UnPausePacman();
+        }       
+    }
+
+
+    // T20 When a Pill object was collided with
+    void APillWasEaten(Collider2D col)
+    {
+        // call another function to increase the score
+        IncreaseTextUIScore();
+
+        // destroy the game object pill MsPacman collided with
+        Destroy(col.gameObject);
+    }
+
+
+    // T20 increase the score when a pill is collided with 'eaten'  'sniffed up'
+    void IncreaseTextUIScore()
+    {
+        // find the score UI component
+        Text textUIComp = GameObject.Find("Score").GetComponent<Text>();
+
+        // get the string stored inside of the Score and convert it to int
+        int score = int.Parse(textUIComp.text);
+
+        // increment the score
+        score += 10;
+
+        // resave the updated score in the textUIComp score string
+        textUIComp.text = score.ToString();
     }
 }
  
