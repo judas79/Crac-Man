@@ -1,0 +1,94 @@
+How to Make a Video Game 21
+https://www.youtube.com/watch?v=zIrTVkDajH8&list=PLGLfVvz_LVvSYnwKyw9xP5tEn7GSUWwZJ&index=21
+
+In this part of my Video Games Tutorial I show how to make the hardest part in Pac-Man, which is the Ghost AI Algorithm. 
+We値l Create the Ghost AI so Ghosts Circle Around the Maze on their own, They値l React to Collisions with Pivot Points and 
+They値l Always Remain Perfectly Centered. We値l also have the Ghosts Move Erratically, Use an Array to Store Game Objects, Make Ms. 
+Pac-Man use Portals and a whole bunch more.
+http://www.newthinktank.com/2017/08/make-video-games-21/
+
+All the Images are Here. The code follows the video below. 
+You can also Download all of my Unity game files so far for Pong, Space Invaders, Tetris and Mario.
+http://www.newthinktank.com/wordpress/MsPacmanImages.zip
+
+
+*************************** setup going through the portal **************************
+
+
+We will first setup the ghost portal, in VS, within the OnTriggerEnter2D statement,
+in the MsPacman.cs script.  
+First, we will get the, two positions, for each turning point, at the far side ends, of the portal ends.
+turning point on left side, point(60):
+position x = 1
+position y = 16
+turning point on right side, point (63)
+position x = 26
+position y = 16
+We will continue our notes and code, in VS...
+
+After returning from setting out portals, run it in VS, to verify, the portals work correctly.
+
+
+*********************************** Ghosts ****************************************
+
+
+First, in the Unity hierarchy create empty and rename it to Ghosts.
+Setting for the Ghosts empty, are the same as your positions x y, for turning points.
+position x = -0.5
+position y = -0.5
+
+Everything for ghosts will depend on turning points, so the Ghost empty must be the same.
+
+Next drag the sprite, spriteSheet(0), the red ghost, into the Ghosts empty.
+Rename it to RedGhost.
+Drag it into prefab, then delete RedGhost from hierarchy, and then drag the RedGhost, from prefab,
+into the Ghosts empty.
+Change the RedGhost position, in settings to:
+position x = 14
+position y = 19
+
+Next, add a rigidbody 2D to the redGhost, and settings:
+Mass = .0001
+Gravity Scale = 0
+collision detection = continous
+Constraints/ freeze rotation = z is checked
+
+Next, add a box collider 2d to the RedGhost, settings:
+is Trigger = checked
+Size: x = .88,   y =.88
+
+Next, create a script, and name it Ghost.
+Then drag the Ghost script into the botttom of the RedGhost settings.
+Then, double click our Ghost script, and we will continue in VS....
+Add 
+using.System;
+To our libraries, inside of Ghost.cs, this will handle detection, if the ghost hits the wall.
+
+After saving, then returning to Unity, and verify that the RedGhost goes left,
+across the screen, when you first run the game.
+
+Next we will go copy a function named 'CanIMoveInDirection' from our MsPacman script, 
+and paste it in our Ghost.cs script, at the bottom, below our OnTriggerEnter2D function.
+The code will be altered to suit the needs to be sent a chosen direction and search for that direction,
+in the array, that is going to hold refrences, called pivot points. 
+
+Continue, in the 'CanIMoveInDirection' function, where you pasted it in the Ghosts script,
+in VS...
+
+After, saving, and returning here, after coding the solutions for the ghost to get to its destination point,
+in the top left area of our maze,
+
+We will go back into our ghost.cs in VS and write the code, for the other three, of the four quadrants,
+the ghost cang go, looking to eat MsPacman, so continue there...
+
+MY script would not work, so I copied the teachers, from the lesson!
+
+After returning to Unity, we will first create a tag fo our ghost(s).
+First, select our RedGhost, and create a tag named Ghost for it.
+Then select RedGhost and choose Ghost from the dropdown, for tag.
+Also, while creating your tag, create a new sorting layer and name Ghost.
+Flip it to be higher than MsPacman, but lower than the default, by dragging it,
+in the field of sorting layer, members.
+Then select Ghost from the sorting layer dropdown for you redGhost.
+
+Now, test that it runs correctly, with the ghost above the dots, and manuevers through the maze corectly.

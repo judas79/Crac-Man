@@ -1,0 +1,599 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+// T21 Used to find out if Ghost hits a wall
+using System;
+
+
+public class Ghost : MonoBehaviour
+{
+    // T21 properties for our ghosts speed
+    public float speed = 4f;
+
+    // T21 reference to rigidbody 2d to move the ghosts
+    private Rigidbody2D rb;
+
+    // T21 animation sprites, for when the ghost look and go in one of the fur directions
+    public Sprite lookLeftSprite;
+    public Sprite lookRightSprite;
+    public Sprite lookUpSprite;
+    public Sprite lookDownSprite;
+
+    // T21 we will be moving the ghosts around the screen, from one vector, to another vector
+    // An array of destinations the Ghosts will move toward while on patrol
+    // we will start from the center and got to the four corners of our maze
+    Vector2[] destinations = new Vector2[]
+    {
+        // we used our dots and turnpoints to get these vectors.
+        // top left corner vector = 1, 29, we will add all four corners, and mid point, to the array
+        // this will also be use to track down msPacman
+        new Vector2(1, 29),
+        new Vector2(26, 29),
+        new Vector2(26, 1),
+        new Vector2(1, 1),
+        new Vector2(6, 16),
+    };
+
+    // T21 for the array, we will also need a destination index.
+    // The index to the first destination the Ghost aims at
+    // Each Ghost aims at a different one
+    public int destinationIndex;
+
+    // T21 Direction Ghost will move when it hits a Point, which will change constantly
+    Vector2 moveVect;
+
+    // T21 Add Rigidbody to Ghosts, before they start being used
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    // T21 Start is called before the first frame update
+    // get the x of the destination turning point at the start
+    void Start()
+    {
+        // have option of the ghost going left or right, when it first comes on the screen
+        float xDest = destinations[destinationIndex].x;
+
+        // If Ghost x pos > destination x
+        if (transform.position.x > xDest)
+        {
+            // move the ghost left
+            rb.velocity = new Vector2(-1, 0) * speed;
+        }
+        else
+        {
+            // move the ghost right
+            rb.velocity = new Vector2(1, 0) * speed;
+        }
+    }
+
+    // T21 We will not be using update, but instead, use the turningPoint and
+    // base everything on collisions and reactions to said collisions, using isTrigger
+    // to detect every trigger point collision of, pivot points, turning points, mspacman, with our ghost.
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        // T21 verify If the Ghost hit a Point
+        if (col.gameObject.tag == "Point")
+        {
+            // get the vector the ghost wants to move in, from GetNewDirection function
+            moveVect = GetNewDirection(col.transform.position);
+
+            // position the ghosts in the middle, but between Point(s)
+            // keeping in mind, the int array, uses integers
+            // this will take our ghost integer position in the grid,
+            // that collided with a Point and add .5, to keep it off the point, in the middle of the screen
+            transform.position = new Vector2((int)col.transform.position.x + .5f, (int)col.transform.position.y + .5f);
+
+            // if it is equal to 2 send back an error message, because vector wise it should be 1, -1, or 0
+            // if not a 2, change the direction of the ghost
+            if (moveVect.x != 2)
+            {
+                rb.velocity = moveVect * speed;
+            }
+        }
+    }
+
+    // T21 this will handle all the ghosts movement, receive a vector2 and return a vector2
+    Vector2 GetNewDirection(Vector2 pointVect)
+    {
+        // if the ghost hits a Point, get x y position minus the .5 we added to it, above in the onTrigger function
+        // convert to float, then round down, the x and y positions, geting rid of the .5
+        float xPos = (float)Math.Floor(Convert.ToDouble(transform.position.x));
+        float yPos = (float)Math.Floor(Convert.ToDouble(transform.position.y));
+
+        // if the pivot points colides with soemthing, get it x y positions, and get rid of the .5
+        pointVect.x = (float)Math.Floor(Convert.ToDouble(pointVect.x));
+        pointVect.y = (float)Math.Floor(Convert.ToDouble(pointVect.y));
+
+        // get the destination that we want the ghost to go
+        Vector2 dest = destinations[destinationIndex];
+
+        // see if the ghost reached his destination and if so incrment to go to the next destination
+        // +1 because there is a discrpency between the onscreen grid and the array grid, of 1
+        if (((pointVect.x + 1) == dest.x) && ((pointVect.y + 1) == dest.y))
+        {
+            // set the destinationIndex to 0 if it is equal to 4, because there are 4 members in the array, using ternary operator ?
+            // if not 4 then set the destination index to whatever it is + 1
+            destinationIndex = (destinationIndex == 4) ? 0 : destinationIndex + 1;
+
+            // show in the console that a new destination has been set
+            Debug.Log("New Destination " + destinations[destinationIndex]);
+        }
+        // T21 we will also update our dest
+        dest = destinations[destinationIndex];
+
+        // setup so if the vector is 2, that we will be notified above in the OnTrigger function
+        Vector2 newDir = new Vector2(2, 0);
+
+        // get  properties, of where our ghost previous direction was 
+        Vector2 preDir = rb.velocity.normalized;
+
+        // T21 hold the opposite of the previous direction
+        Vector2 oppPrevDir = preDir * -1;
+
+        // make the code more redable by defining the up, down right left directions
+        Vector2 goRight = new Vector2(1, 0);
+        Vector2 goLeft = new Vector2(-1, 0);
+        Vector2 goUp = new Vector2(0, 1);
+        Vector2 goDown = new Vector2(0, -1);
+
+        // calculate the distance of our ghost current position and its ultimate destination
+        float destXDist = dest.x - xPos;
+        float destYDist = dest.y - yPos;
+
+        Debug.Log("Get New Direction : ");
+        Debug.Log("X Position : " + xPos);
+        Debug.Log("Y Position : " + yPos);
+        Debug.Log("Dest X Position : " + dest.x);
+        Debug.Log("Dest Y Position : " + dest.y);
+        Debug.Log("Point X Position : " + pointVect.x);
+        Debug.Log("Point Y Position : " + pointVect.y);
+
+        // This section will be dedicated to the AI coraling of MsPacman by the ghosts.
+        // We will do things like, avoid the porals, and go right or left dependant on the nearest route for the ghosts to get MsPacman.
+
+        // Upper Left
+
+        // Keeps Ghost from going toward the portal, and setsup going towards the top left area of the maze
+        // after calculating destXDist and destYDist, by subtracting the ghosts position, from the final destination position
+        // Then the x vector (less than 0) and the y vector (greater than 0) will be located in the top left
+        // so this will point the ghost to move to the left top destination.
+        // Example: The ghost position is, 14, 19, our top left position is 1, 29, destXDist = 1 - 14, which is -13, 
+        // which is destYDist > 0; for the y destination, destYDist = 29 - 19,  which equals 10, which in our if statement (destYDist > 0)
+        // which satisfies both stipulations in the if statement, to move the ghost, top left.
+        if (destYDist > 0 && destXDist < 0)
+        {
+            // if we hit the Point, for the portal, ignore it, 
+            if (pointVect.x == 5 && pointVect.y == 15)
+            {
+                // go up instead, if it can, and do not backtrack where you just came from, no repeating, back and forth mvoement
+                if (canIMoveInDirection(goUp, pointVect) && goUp != oppPrevDir)
+                {
+                    // this will be returned later on, if all is true
+                    newDir = goUp;
+                }
+
+            // pick 'up' or 'left' if our Y destination distance is closer than our x destination distance, is to our final destination 
+            else if (destYDist > destXDist)
+            {
+                // can I go left, without back tracking in the direction I just moved in
+                if (canIMoveInDirection(goLeft, pointVect) && goLeft != oppPrevDir)
+                {
+                    // return this, if we can go left
+                    newDir = goLeft;
+                }
+                // can I go up, without back tracking in the direction I just moved in
+                else if (canIMoveInDirection(goUp, pointVect) && goUp != oppPrevDir)
+                {
+                    // return this, if we can go left
+                    newDir = goUp;
+                }
+                // can I go right, without back tracking in the direction I just moved in
+                else if (canIMoveInDirection(goRight, pointVect) && goRight != oppPrevDir)
+                {
+                    // return this, if we can go left
+                    newDir = goRight;
+                }
+                // can I go down, without back tracking in the direction I just moved in
+                else if (canIMoveInDirection(goDown, pointVect) && goDown != oppPrevDir)
+                {
+                    // return this, if we can go left
+                    newDir = goDown;
+                }
+
+                // T21 we didn't need this
+                // can I go in the opposite direction, yes backtrack, as final heading
+                else if (canIMoveInDirection(oppPrevDir, pointVect))
+                {
+                    // return this, if all else fails
+                    newDir = oppPrevDir;
+                }
+
+            }
+            // pick 'up' or 'left' if our X destination distance is closer than our Y destination distance, is to our final destination 
+            else if (destYDist < destXDist)
+            {
+                // can I go up, without back tracking in the direction I just moved in
+                if (canIMoveInDirection(goUp, pointVect) && goUp != oppPrevDir)
+                {
+                    // return this, if we can go left
+                    newDir = goUp;
+                }
+                // can I go left, without back tracking in the direction I just moved in
+                else if (canIMoveInDirection(goLeft, pointVect) && goLeft != oppPrevDir)
+                {
+                    // return this, if we can go left
+                    newDir = goLeft;
+                }
+
+                // can I go right, without back tracking in the direction I just moved in
+                else if (canIMoveInDirection(goRight, pointVect) && goRight != oppPrevDir)
+                {
+                    // return this, if we can go left
+                    newDir = goRight;
+                }
+                // can I go down, without back tracking in the direction I just moved in
+                else if (canIMoveInDirection(goDown, pointVect) && goDown != oppPrevDir)
+                {
+                    // return this, if we can go left
+                    newDir = goDown;
+                }
+                // T21 we didn't need this
+                // can I go in the opposite direction, yes backtrack, as final heading
+                else if (canIMoveInDirection(oppPrevDir, pointVect))
+                {
+                    // return this, if all else fails
+                    newDir = oppPrevDir;
+                }
+
+            }   
+
+        }
+
+        // Upper Right
+        // T21 this section will test for when the y's are equal, and we want to move to the top right
+        if (destYDist > 0 && destXDist > 0)
+        {
+
+            if (destYDist > destXDist)
+            {
+
+                if (canIMoveInDirection(goRight, pointVect) && goRight != oppPrevDir)
+                {
+                    newDir = goRight;
+                }
+                else if (canIMoveInDirection(goUp, pointVect) && goUp != oppPrevDir)
+                {
+                    newDir = goUp;
+                }
+                else if (canIMoveInDirection(goLeft, pointVect) && goLeft != oppPrevDir)
+                {
+                    newDir = goLeft;
+                }
+                else if (canIMoveInDirection(goDown, pointVect) && goDown != oppPrevDir)
+                {
+                    newDir = goDown;
+                }
+                else if (canIMoveInDirection(oppPrevDir, pointVect))
+                {
+                    newDir = oppPrevDir;
+                }
+
+            }
+            else if (destYDist < destXDist)
+            {
+
+                if (canIMoveInDirection(goUp, pointVect) && goUp != oppPrevDir)
+                {
+                    newDir = goUp;
+                }
+                else if (canIMoveInDirection(goRight, pointVect) && goRight != oppPrevDir)
+                {
+                    newDir = goRight;
+                }
+                else if (canIMoveInDirection(goLeft, pointVect) && goLeft != oppPrevDir)
+                {
+                    newDir = goLeft;
+                }
+                else if (canIMoveInDirection(goDown, pointVect) && goDown != oppPrevDir)
+                {
+                    newDir = goDown;
+                }
+                else if (canIMoveInDirection(oppPrevDir, pointVect))
+                {
+                    newDir = oppPrevDir;
+                }
+
+            }
+
+        }
+
+
+        // Lower Right
+
+        if (destYDist < 0 && destXDist > 0)
+        {
+
+            if (destYDist > destXDist)
+            {
+
+                if (canIMoveInDirection(goRight, pointVect) && goRight != oppPrevDir)
+                {
+                    newDir = goRight;
+                }
+                else if (canIMoveInDirection(goDown, pointVect) && goDown != oppPrevDir)
+                {
+                    newDir = goDown;
+                }
+                else if (canIMoveInDirection(goLeft, pointVect) && goLeft != oppPrevDir)
+                {
+                    newDir = goLeft;
+                }
+                else if (canIMoveInDirection(goUp, pointVect) && goUp != oppPrevDir)
+                {
+                    newDir = goUp;
+                }
+                else if (canIMoveInDirection(oppPrevDir, pointVect))
+                {
+                    newDir = oppPrevDir;
+                }
+
+            }
+            else if (destYDist < destXDist)
+            {
+
+                if (canIMoveInDirection(goDown, pointVect) && goDown != oppPrevDir)
+                {
+                    newDir = goDown;
+                }
+                else if (canIMoveInDirection(goRight, pointVect) && goRight != oppPrevDir)
+                {
+                    newDir = goRight;
+                }
+                else if (canIMoveInDirection(goLeft, pointVect) && goLeft != oppPrevDir)
+                {
+                    newDir = goLeft;
+                }
+                else if (canIMoveInDirection(goUp, pointVect) && goUp != oppPrevDir)
+                {
+                    newDir = goUp;
+                }
+                else if (canIMoveInDirection(oppPrevDir, pointVect))
+                {
+                    newDir = oppPrevDir;
+                }
+                else if (canIMoveInDirection(oppPrevDir, pointVect))
+                {
+                    newDir = oppPrevDir;
+                }
+
+            }
+
+        }
+
+        // Lower Left
+
+        if (destYDist < 0 && destXDist < 0)
+        {
+
+            if (destYDist > destXDist)
+            {
+
+                if (canIMoveInDirection(goLeft, pointVect) && goLeft != oppPrevDir)
+                {
+                    newDir = goLeft;
+                }
+                else if (canIMoveInDirection(goDown, pointVect) && goDown != oppPrevDir)
+                {
+                    newDir = goDown;
+                }
+                else if (canIMoveInDirection(goRight, pointVect) && goRight != oppPrevDir)
+                {
+                    newDir = goRight;
+                }
+                else if (canIMoveInDirection(goUp, pointVect) && goUp != oppPrevDir)
+                {
+                    newDir = goUp;
+                }
+                else if (canIMoveInDirection(oppPrevDir, pointVect))
+                {
+                    newDir = oppPrevDir;
+                }
+
+            }
+            else if (destYDist < destXDist)
+            {
+
+                if (canIMoveInDirection(goDown, pointVect) && goDown != oppPrevDir)
+                {
+                    newDir = goDown;
+                }
+                else if (canIMoveInDirection(goLeft, pointVect) && goLeft != oppPrevDir)
+                {
+                    newDir = goLeft;
+                }
+                else if (canIMoveInDirection(goRight, pointVect) && goRight != oppPrevDir)
+                {
+                    newDir = goRight;
+                }
+                else if (canIMoveInDirection(goUp, pointVect) && goUp != oppPrevDir)
+                {
+                    newDir = goUp;
+                }
+                else if (canIMoveInDirection(oppPrevDir, pointVect))
+                {
+                    newDir = oppPrevDir;
+                }
+
+            }
+
+        }
+
+        // Ys are Equal and Want to go top Right
+        // Done because the above don't test for if Xs & Ys are equal
+
+        if ((int)(dest.y) == (int)(yPos)
+            && destXDist > 0)
+        {
+
+            Debug.Log("5");
+
+            if (canIMoveInDirection(goRight, pointVect) && goRight != oppPrevDir)
+            {
+                newDir = goRight;
+            }
+            else if (canIMoveInDirection(goUp, pointVect) && goUp != oppPrevDir)
+            {
+                newDir = goUp;
+            }
+            else if (canIMoveInDirection(goDown, pointVect) && goDown != oppPrevDir)
+            {
+                newDir = goDown;
+            }
+            else if (canIMoveInDirection(goLeft, pointVect) && goLeft != oppPrevDir)
+            {
+                newDir = goLeft;
+            }
+
+        }
+
+        // Ys Equal and Want to go Left
+
+        if ((int)(dest.y) == (int)(yPos)
+            && destXDist < 0)
+        {
+
+            Debug.Log("6");
+
+            if (canIMoveInDirection(goLeft, pointVect) && goLeft != oppPrevDir)
+            {
+                newDir = goLeft;
+            }
+            else if (canIMoveInDirection(goUp, pointVect) && goUp != oppPrevDir)
+            {
+                newDir = goUp;
+            }
+            else if (canIMoveInDirection(goDown, pointVect) && goDown != oppPrevDir)
+            {
+                newDir = goDown;
+            }
+            else if (canIMoveInDirection(goRight, pointVect) && goRight != oppPrevDir)
+            {
+                newDir = goRight;
+            }
+
+        }
+
+        // Xs Equal and Want to go Up
+
+        if ((int)(dest.x) == (int)(xPos)
+            && destYDist > 0)
+        {
+
+            Debug.Log("7");
+
+            if (canIMoveInDirection(goUp, pointVect) && goUp != oppPrevDir)
+            {
+                newDir = goUp;
+            }
+            else if (canIMoveInDirection(goRight, pointVect) && goRight != oppPrevDir)
+            {
+                newDir = goRight;
+            }
+            else if (canIMoveInDirection(goLeft, pointVect) && goLeft != oppPrevDir)
+            {
+                newDir = goLeft;
+            }
+            else if (canIMoveInDirection(goDown, pointVect) && goDown != oppPrevDir)
+            {
+                newDir = goDown;
+            }
+        }
+
+
+        // Xs Equal and Want to go Down
+
+        if ((int)(dest.x) == (int)(xPos)
+            && destYDist < 0)
+        {
+
+            Debug.Log("8");
+
+            if (canIMoveInDirection(goDown, pointVect) && goDown != oppPrevDir)
+            {
+                newDir = goDown;
+            }
+            else if (canIMoveInDirection(goRight, pointVect) && goRight != oppPrevDir)
+            {
+                newDir = goRight;
+            }
+            else if (canIMoveInDirection(goLeft, pointVect) && goLeft != oppPrevDir)
+            {
+                newDir = goLeft;
+            }
+            else if (canIMoveInDirection(goUp, pointVect) && goUp != oppPrevDir)
+            {
+                newDir = goUp;
+            }
+
+        }
+        return newDir;
+    }
+    
+
+
+
+    // T21 this function was copied and pasted from the MsPacman.cs script
+    // The code will be altered to suit the needs to be sent a chosen direction and search for that direction,
+    // in the array, that is going to hoyld refrences, called pivot points.
+    // the ghost direction will be determined in code, as apposed to the keyboard keys, used in T19
+    // we will first add another condition: 'Vector2 pointVevt'
+    // T19 Find out if Pac-man is on a TurningPoint, 
+    // to verify if mspacman  can move in the direction (dir), inputed by the user, using keypad
+    bool canIMoveInDirection(Vector2 dir, Vector2 pointVect)
+    {
+        // get mspacmans current position
+        Vector2 pos = transform.position;
+
+        // T19 Used to find if there a Point in the array or null
+        // is there a point in the array that matches up with mspacmans current position
+        // find the GBGrid game object, to get hold of the gBPoints array, through the GameBoard script component,
+        // the gBPoints array, inside of the Gameboard script holds the dimmnsions of the x,y gameplay turningpoint area: [27, 30];
+        //Transform point = GameObject.Find("GBGrid").GetComponent<Gameboard>().gBPoints[(int)pos.x, (int)pos.y];
+
+        // T20 here we will get the ghosts position 'gBPoints[(int)pointVect.x, (int)pointVect.y];', instead of mspacmans position, as it did above
+        Transform point = GameObject.Find("GBGrid").GetComponent<Gameboard>().gBPoints[(int)pointVect.x, (int)pointVect.y];
+
+        // did we find a turningpoint in the array, we just looked for one in, 
+        // not a null, everywhere else will  have a turning Point
+        if (point != null)
+        {
+            // get Points associated with that specific game object, point
+            GameObject PointGO = point.gameObject;
+
+            // T19 Get vector To Next Point array attached to the point, and store in an array
+            // by getting specifically, the TurningPoint, and assigning it to itself
+            Vector2[] vectToNextPoint = PointGO.GetComponent<TurningPoint>().vectToNextPoint;
+
+            // T21 get some debugging info., dir - the direction we want to go in
+            Debug.Log("Checking Vects " + dir);
+
+            // T19 Cycle through the attached vectToNextPoint array,
+            // to see if we have a match with the direction the user wants to go in
+            foreach (Vector2 vect in vectToNextPoint)
+            {
+                // T21 print out the vectors to see, which one is the one we are searching for, and other error that may occur
+                Debug.Log("Checking " + vect);
+
+                if (vect == dir)
+                {
+                    // if we get a match
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+    }
+

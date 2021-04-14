@@ -401,7 +401,37 @@ public class MsPacman : MonoBehaviour
             }              
         }
 
-        // T20 If Pac-Man hit a Pill
+        // T21 Simulates going through the portal
+        // setup vector2 so mspacman can move around, from one side of the maze,
+        // to the other opposite side, simulating, going through the portal
+        Vector2 pmMoveVect = new Vector3(0, 0);
+
+        // T21 We want the y axis to be exited close to, but not right on the turning point
+        // otherwise mspacman could collide with the turning points
+        // left and right sides turning point for y are both 16
+        // left side x position = 1, right side x position is 26
+        // get mspacmans positions, relative to the turning point position, 
+        // in proximity to the portal,( where it exists)
+        if(transform.position.x < 2 && transform.position.y == 15.5)
+        {
+            // (transform) set mspacmans position to this new position, that avoids landing on a turning point 
+            transform.position = new Vector2(24.5f, 15.5f);
+
+            // mspacman procceds turning to the left, on other side of the portal
+            pmMoveVect = new Vector2(-1, 0);
+
+            // set our velocity
+            rb.velocity = pmMoveVect * speed;
+        }
+        // T21 handle the other side of the portal
+        else if(transform.position.x > 25 && transform.position.y == 15.5)
+        {
+            transform.position = new Vector2(2f, 15.5f);
+            pmMoveVect = new Vector2(1, 0);
+            rb.velocity = pmMoveVect * speed;
+        }
+
+        // T20 If Pac-Man hits a Pill
         if (col.gameObject.tag == "Pill")
         {
             // call function and pass in the pill MsPacman collided with

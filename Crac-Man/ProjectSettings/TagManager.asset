@@ -8,6 +8,7 @@ TagManager:
   - Dot
   - Point
   - Pill
+  - Ghost
   layers:
   - Default
   - TransparentFX
@@ -44,6 +45,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Ghost
+    uniqueID: 3034959075
     locked: 0
   - name: MsPacman
     uniqueID: 2959297751

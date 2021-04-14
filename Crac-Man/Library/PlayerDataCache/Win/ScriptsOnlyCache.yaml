@@ -2,6 +2,7 @@ ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
     - Gameboard
+    - Ghost
     - MsPacman
     - SoundManager
     - TurningPoint
@@ -9,6 +10,8 @@ ScriptsOnlyBuild:
     - UnityEditor.U2D.Animation.BoneGizmo
     Unity.2D.Tilemap.Editor.dll:
     - UnityEditor.Tilemaps.GridPaintingState
+    - UnityEditor.Tilemaps.GridPaletteBrushes
+    - UnityEditor.Tilemaps.GridPalettes
     - UnityEditor.Tilemaps.SceneViewGridManager
     - UnityEditor.Tilemaps.TileDragAndDropManager
     Unity.Rider.Editor.dll:
@@ -68,19 +71,21 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11554}
     - Class: 114
-      Script: {instanceID: 12274}
+      Script: {instanceID: 11818}
     - Class: 114
-      Script: {instanceID: 12750}
+      Script: {instanceID: 12276}
     - Class: 114
-      Script: {instanceID: 13052}
+      Script: {instanceID: 12752}
     - Class: 114
-      Script: {instanceID: 13620}
+      Script: {instanceID: 13054}
     - Class: 114
-      Script: {instanceID: 13642}
+      Script: {instanceID: 13622}
     - Class: 114
-      Script: {instanceID: 13748}
+      Script: {instanceID: 13644}
     - Class: 114
-      Script: {instanceID: 14360}
+      Script: {instanceID: 13752}
+    - Class: 114
+      Script: {instanceID: 14364}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -232,6 +237,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.EventSystems
     className: PhysicsRaycaster
+  - hash:
+      serializedVersion: 2
+      Hash: bc3b8cb12225837f74aa9e07fbb0083e
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: Ghost
   - hash:
       serializedVersion: 2
       Hash: bd3cf68c8964d3c66d1c43f4f98508c9
@@ -613,5 +624,5 @@ ScriptsOnlyBuild:
   platform: 5
   scenePathNames:
   - Assets/Scenes/MainScene.unity
-  playerPath: C:/Users/judas/Documents/Unity/Crac-Man/How to Make Video Games 20
-    Make Pac-Man 4/T20 The game so far compiled for windows/Crac-Man.exe
+  playerPath: C:/Users/judas/Documents/Unity/Crac-Man/How to Make Video Games 21/T21
+    game so far compiled for windows/Crac-Man.exe
