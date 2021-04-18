@@ -14,6 +14,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip ghostMove;
     public AudioClip pacmanDies;
     public AudioClip powerupEating;
+    public AudioClip Dynomite;
 
     // T20 Refers to the audio source used for Pac-Man
     // eating dots, sniffing dots

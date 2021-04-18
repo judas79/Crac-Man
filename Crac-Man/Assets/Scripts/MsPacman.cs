@@ -27,10 +27,27 @@ public class MsPacman : MonoBehaviour
     public AudioClip pacmanDies;
     public AudioClip powerupEating;
 
+    // T22 refference to Gameboard, so we can user it here, to acces IsValidSpace()
+    Gameboard gameBoard;
+
+
+    // T22 add reference to the redGhostScript, so we can use it here
+    Ghost redGhostScript;
+
     // T18 awake function, to create component(s) before they are to be used
     private void Awake()
     {
+        // T18 create the rb
         rb = GetComponent<Rigidbody2D>();
+
+        // T22 acess Gameboard, the script itself, by finding it
+        gameBoard = FindObjectOfType(typeof(Gameboard)) as Gameboard;
+
+        // T22 find and create the redGhostScript object, so it is started before it is used
+        GameObject redGhostGO = GameObject.Find("RedGhost");
+
+        // T22 get the script (Ghost) attached to gameObject redGhostGO as a Ghost type
+        redGhostScript = (Ghost)redGhostGO.GetComponent(typeof(Ghost));
     }
 
     // T18 Start is called before the first frame update
@@ -66,7 +83,11 @@ public class MsPacman : MonoBehaviour
         {
             // T19 enable mspacman to reverse direction anywhere, without being on turn points
             // if mspacman is moving in the right direction
-            if(localVelocity.x > 0)
+            //if(localVelocity.x > 0)
+            // T22 if statement ogmented to verify that pacman can move left, using the gameBoard script
+            // we are checking the position x to the left of its current position, so (-1), y remains the same, so its valid 
+            // this will keep pacman withing the inner, and outer borders of out maze
+            if(localVelocity.x > 0 && gameBoard.IsValidSpace(transform.position.x -1, transform.position.y))
             {
                 // T19 define moveVect, for moving horizontally, y is 0
                 moveVect = new Vector2(horzMove, 0);
@@ -127,7 +148,9 @@ public class MsPacman : MonoBehaviour
         {
             // T19 enable mspacman to reverse direction anywhere, without being on turn points
             // if mspacman is moving in the left direction
-            if (localVelocity.x < 0)
+            //if (localVelocity.x < 0)
+            // T22 augmented to verify that pacman can move right 1 space, by using gameBoard.cs IsValidSpace()
+            if (localVelocity.x < 0 && gameBoard.IsValidSpace(transform.position.x + 1, transform.position.y))
             {
                 // T19 define moveVect, for moving horizontally, y is 0
                 moveVect = new Vector2(horzMove, 0);
@@ -189,7 +212,9 @@ public class MsPacman : MonoBehaviour
         {
             // T19 enable mspacman to reverse direction anywhere, without being on turn points
             // if mspacman is moving in the left direction
-            if (localVelocity.y > 0)
+            //if (localVelocity.y > 0)
+            // T22 augmented to verify that pacman can move up 1 space, by using gameBoard.cs IsValidSpace()
+            if (localVelocity.y > 0 && gameBoard.IsValidSpace(transform.position.x, transform.position.y + 1))
             {
                 // T19 define moveVect, for moving vertically, x is 0
                 moveVect = new Vector2(0, vertMove);
@@ -251,7 +276,9 @@ public class MsPacman : MonoBehaviour
         {
             // T19 enable mspacman to reverse direction anywhere, without being on turn points
             // if mspacman is moving in the left direction
-            if (localVelocity.y < 0)
+            //if (localVelocity.y < 0)
+            // T22 augmented to verify that pacman can move down 1 space, by using gameBoard.cs IsValidSpace()
+            if (localVelocity.y < 0 && gameBoard.IsValidSpace(transform.position.x, transform.position.y - 1))
             {
                 // T19 define moveVect, for moving vertically, x is 0
                 moveVect = new Vector2(0, vertMove);
@@ -436,6 +463,15 @@ public class MsPacman : MonoBehaviour
         {
             // call function and pass in the pill MsPacman collided with
             APillWasEaten(col);
+        }
+        // T22 If Pac-Man hits a Dot
+        if (col.gameObject.tag == "Dot")
+        {
+            // T22 play Dot eaten Dynomite sound effect
+            SoundManager.Instance.PlayOneShot(SoundManager.Instance.Dynomite);
+
+            // T22 call our redGhostScript, to turn ghost blue then back
+            redGhostScript.TurnGhostBlue();
         }
     }
 

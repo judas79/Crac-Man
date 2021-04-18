@@ -1,0 +1,72 @@
+How to Make a Video Game 22
+https://www.youtube.com/watch?v=3tvdbE1AbWA&list=PLGLfVvz_LVvSYnwKyw9xP5tEn7GSUWwZJ&index=22
+
+In this part of my tutorial on making Ms. Pac-Man we learn all sorts of useful techniques. 
+We’ll learn how to use arrays to keep Ms. Pac-Man in the maze, modeling a game board in an array, 
+turning ghosts blue, animating ghosts, accessing game object scripts in code, going through portals, 
+more about StartCoroutine, sound effects and much more.
+http://www.newthinktank.com/2017/08/make-video-games-22/
+
+All the Images are Here. The code follows the video below. You can also Download all of my Unity game files so far for Pong, 
+Space Invaders, Tetris and Mario.
+http://www.newthinktank.com/wordpress/MsPacmanImages.zip
+
+
+The first thing we will do, is fix the unwanted ability, of our pacman, to go through,
+the blocks, that separate our maze.  Double click our Gameboard script in Unity,
+and we will continue there, in VS, with our code and notes...
+
+After saving our changes for Gameboard.cs, to keep MsPacman inside the borders of our maze,
+we will now continue in MsPacman.cs.  We will implement the changes there, that we made in Gameboard.cs...
+
+After saving, and returning from MsPacman.cs, we have returned to verify that our MsPacman, can no longer,
+cut through the inner and outer walls, of our maze.  run game to verify.
+
+
+******************************* animate ghost eyes ***************************
+
+Next, we will animate our ghost, so that his eyes face in the direction that he is moving in.
+First click your RedGhost, in hierarchy, and verify that you already created, the properties area, in the Ghost script,
+for your variations of the red ghost sprites, to be dragged into.
+
+Next, we will open up our Ghost script, and continue there...
+
+After saving, and returning from setting up our Redghost to look in the direction,
+he is moving in, run the game to verify.
+
+
+******************************** Ghost goes through portals *******************************
+
+
+Next, we will enable our ghost, to go through the portals.
+Continue in Ghost.cs in the OnTriggerEnter2D function, withing VS...
+
+********************************* Ghost turns Blue **********************************
+
+Continue in Ghost.cs to turn our Ghost blue...
+After saving, from making a place to store our blue ghost, select our RedGhost, in hierarchy,
+and drag our blueGhost Sprite into the Blue Ghost field, in the Ghost scripts settings.
+Now we can turn the RedGhost blue.
+
+Next, we will return to our Ghost script, and make sure the BlueGhost is not animated, 
+in our OnTriggerEnter2D function, within VS...
+
+After finishing enabling are ghost to turn blue, then return back to normal, after six second,
+we will go back into our MsPacman.cs and start there, by adding a reference to our Ghost script,
+so we can use it there ...
+
+After saving, and returning from getting out RedGhost script from within MsPacman,
+we will set up our misnamed "Pills" which we will call "Dots"
+
+
+********************************** Setup Dots ******************************
+
+First, In the Dots empty, select all four Dot objects, and add circleColliders 2D to them.
+Check, isTrigger for all Dots.
+
+Next, we will continue in our MsPacman script, setting up our dots, in the OnTriggerEnter2D function,
+continue there...
+
+
+
+

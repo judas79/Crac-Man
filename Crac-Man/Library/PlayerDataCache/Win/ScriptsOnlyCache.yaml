@@ -83,9 +83,9 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 13644}
     - Class: 114
-      Script: {instanceID: 13752}
+      Script: {instanceID: 13750}
     - Class: 114
-      Script: {instanceID: 14364}
+      Script: {instanceID: 14362}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -239,7 +239,7 @@ ScriptsOnlyBuild:
     className: PhysicsRaycaster
   - hash:
       serializedVersion: 2
-      Hash: bc3b8cb12225837f74aa9e07fbb0083e
+      Hash: c83e9a56a7d63d3171d28008ee63b4f5
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Ghost
@@ -407,7 +407,7 @@ ScriptsOnlyBuild:
     className: RawImage
   - hash:
       serializedVersion: 2
-      Hash: 3c2ef352d4da7a14dc8ca5fae8233991
+      Hash: 8a57e43c06acf9ad889d30eb5778dea4
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: SoundManager
@@ -624,5 +624,5 @@ ScriptsOnlyBuild:
   platform: 5
   scenePathNames:
   - Assets/Scenes/MainScene.unity
-  playerPath: C:/Users/judas/Documents/Unity/Crac-Man/How to Make Video Games 21/T21
+  playerPath: C:/Users/judas/Documents/Unity/Crac-Man/How to Make Video Games 22/T22
     game so far compiled for windows/Crac-Man.exe

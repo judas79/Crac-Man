@@ -52,11 +52,26 @@ public class Ghost : MonoBehaviour
     // T21 Direction Ghost will move when it hits a Point, which will change constantly
     Vector2 moveVect;
 
+    // T22 in order to change between the 4 sprites, for the RedGhost, making it animated,
+    // we have to reference our sprite renderer
+    public SpriteRenderer sr;
+
+    // T22 track To See if our ghost is blue, or not, 
+    // so sprite animations are not called if ghost is blue, and makes a turn
+    bool isGhostBlue = false;
+
+    // T22 store the blue version of our ghost
+    public Sprite blueGhost;
+
     // T21 Add Rigidbody to Ghosts, before they start being used
     void Awake()
     {
-        // Get Ghost Rigidbody
+        // Get Ghost Rigidbody created
         rb = GetComponent<Rigidbody2D>();
+
+        // T22 create the sr spriteRenderer, which is attached to our RedGhost, and will be used to animate it
+        // by changing the sprites attached to our ghost
+        sr = gameObject.GetComponent<SpriteRenderer>();
     }
 
     // T21 Start is called before the first frame update
@@ -104,13 +119,85 @@ public class Ghost : MonoBehaviour
             // if not a 2, change the direction of the ghost
             if (moveVect.x != 2)
             {
+                // T22 change the sprite associated with our redghost
+                // if the ghost is moving to the right, left, up, or down
+                if(moveVect == Vector2.right)
+                {
+                    // T21 Changes the direction of the Ghost
+                    rb.velocity = moveVect * speed;
 
-                // Changes the direction of the Ghost
-                rb.velocity = moveVect * speed;
+                    // T22 default IsGhostBlue is false, So if ghost is not blue, we can use our sprite animation
+                    if(!isGhostBlue)
+                    {
+                        sr.sprite = lookRightSprite;
+                    }
+
+                    // T22 change our sprite so it looks in the cooriponding direction, that its moving
+                    // T22 moved above into if statement
+                    //sr.sprite = lookRightSprite;
+                }
+                else if (moveVect == Vector2.left)
+                {
+                    rb.velocity = moveVect * speed;
+                    if (!isGhostBlue)
+                    {
+                        sr.sprite = lookLeftSprite;
+                    }
+                    //sr.sprite = lookLeftSprite;
+                }
+                else if (moveVect == Vector2.up)
+                {
+                    rb.velocity = moveVect * speed;
+                    if (!isGhostBlue)
+                    {
+                        sr.sprite = lookUpSprite;
+                    }
+                    //sr.sprite = lookUpSprite;
+                }
+                else if (moveVect == Vector2.down)
+                {
+                    rb.velocity = moveVect * speed;
+                    if (!isGhostBlue)
+                    {
+                        sr.sprite = lookDownSprite;
+                    }
+                    //sr.sprite = lookDownSprite;
+                }
+
+                // T21 Changes the direction of the Ghost
+                // T22 moved into if statements, above
+                //rb.velocity = moveVect * speed;
             }
 
         }
 
+        // T22 verify If our ghost collides with a Portal Point, 
+        Vector2 ghostMoveVect = new Vector2(0, 0);
+
+        // T22 if its the Point next to the entrance to  the Left portal 
+        if (transform.position.x < 2 && transform.position.y == 15.5)
+        {
+            // T22 change the position of the ghost, to the other end of the portal
+            transform.position = new Vector2(24.5f, 15.5f);
+
+            // T22 make sure the ghost continues moving left, after jumping to the right portal
+            ghostMoveVect = new Vector2(-1, 0);
+
+            // T22 set the ghosts velocity, by its rigidbody
+            rb.velocity = ghostMoveVect * speed;
+        }
+        // T22 if its the Point next to the entrance to  the Right portal 
+        else if (transform.position.x > 25 && transform.position.y == 15.5)
+        {
+            // T22 change the position of the ghost, to the other side of the portal
+            transform.position = new Vector2(2f, 15.5f);
+
+            // T22 make sure the ghost continues moving right, after jumping to the right portal
+            ghostMoveVect = new Vector2(1, 0);
+
+            // T22 set the ghosts velocity, by its rigidbody
+            rb.velocity = ghostMoveVect * speed;
+        }
     }
 
     // T21 this will handle all the ghosts movement, receive a vector2 and return a vector2
@@ -584,5 +671,27 @@ public class Ghost : MonoBehaviour
             }
         }
         return false;
+    }
+
+
+    // T22 create a way to be able, for outside objects, to change our ghost blue, for a couple of seconds
+    public void TurnGhostBlue()
+    {
+        // T22 call our Ienumerator co-routine
+        StartCoroutine(TurnGhostBlueAndBack());
+    }
+
+    // T22 start go routine to turn our ghost back from being blue
+    IEnumerator TurnGhostBlueAndBack()
+    {
+        // T22
+        isGhostBlue = true;
+
+        // T22 change the sprite for out ghost, by calling sprite renderer
+        sr.sprite = blueGhost;
+
+        // T22 wait 6 seconds before turning our ghost back to its normal color
+        yield return new WaitForSeconds(6.6f);
+        isGhostBlue = false;
     }
 }
