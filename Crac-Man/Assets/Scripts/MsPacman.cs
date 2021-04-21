@@ -32,7 +32,12 @@ public class MsPacman : MonoBehaviour
 
 
     // T22 add reference to the redGhostScript, so we can use it here
+    // T23 add references for the other 3 ghosts scripts
     Ghost redGhostScript;
+    Ghost pinkGhostScript;
+    Ghost blueGhostScript;
+    Ghost orangeGhostScript;
+
 
     // T18 awake function, to create component(s) before they are to be used
     private void Awake()
@@ -43,11 +48,19 @@ public class MsPacman : MonoBehaviour
         // T22 acess Gameboard, the script itself, by finding it
         gameBoard = FindObjectOfType(typeof(Gameboard)) as Gameboard;
 
-        // T22 find and create the redGhostScript object, so it is started before it is used
+        // T22 find and create the redGhostScript game object, so it is started before it is used
+        // T23 find and create the game objects for the 3 remaining ghosts, and start them
         GameObject redGhostGO = GameObject.Find("RedGhost");
+        GameObject pinkGhostGO = GameObject.Find("PinkGhost");
+        GameObject blueGhostGO = GameObject.Find("BlueGhost");
+        GameObject orangeGhostGO = GameObject.Find("OrangeGhost");
 
         // T22 get the script (Ghost) attached to gameObject redGhostGO as a Ghost type
+        // T23 get the script (Ghost) attached to the remaining 3 gameObjects as a Ghost type
         redGhostScript = (Ghost)redGhostGO.GetComponent(typeof(Ghost));
+        pinkGhostScript = (Ghost)pinkGhostGO.GetComponent(typeof(Ghost));
+        blueGhostScript = (Ghost)blueGhostGO.GetComponent(typeof(Ghost));
+        orangeGhostScript = (Ghost)orangeGhostGO.GetComponent(typeof(Ghost));
     }
 
     // T18 Start is called before the first frame update
@@ -411,7 +424,7 @@ public class MsPacman : MonoBehaviour
             else
             {
                 // yes we hit a wall; can't go in that direction
-                hitAWall = true;               
+                hitAWall = true;
             }
 
             // verify the mspacman is centered in the maze borders
@@ -425,7 +438,7 @@ public class MsPacman : MonoBehaviour
             if (hitAWall)
             {
                 rb.velocity = Vector2.zero;
-            }              
+            }
         }
 
         // T21 Simulates going through the portal
@@ -439,7 +452,7 @@ public class MsPacman : MonoBehaviour
         // left side x position = 1, right side x position is 26
         // get mspacmans positions, relative to the turning point position, 
         // in proximity to the portal,( where it exists)
-        if(transform.position.x < 2 && transform.position.y == 15.5)
+        if (transform.position.x < 2 && transform.position.y == 15.5)
         {
             // (transform) set mspacmans position to this new position, that avoids landing on a turning point 
             transform.position = new Vector2(24.5f, 15.5f);
@@ -451,7 +464,7 @@ public class MsPacman : MonoBehaviour
             rb.velocity = pmMoveVect * speed;
         }
         // T21 handle the other side of the portal
-        else if(transform.position.x > 25 && transform.position.y == 15.5)
+        else if (transform.position.x > 25 && transform.position.y == 15.5)
         {
             transform.position = new Vector2(2f, 15.5f);
             pmMoveVect = new Vector2(1, 0);
@@ -471,7 +484,137 @@ public class MsPacman : MonoBehaviour
             SoundManager.Instance.PlayOneShot(SoundManager.Instance.Dynomite);
 
             // T22 call our redGhostScript, to turn ghost blue then back
+            // T23 call our other 3 ghost scripts, to turn the ghosts blue then back
             redGhostScript.TurnGhostBlue();
+            pinkGhostScript.TurnGhostBlue();
+            blueGhostScript.TurnGhostBlue();
+            orangeGhostScript.TurnGhostBlue();
+
+            // T23 pass 50 to IncreaseTextUIScore(), when Dot is collided with
+            IncreaseTextUIScore(50);
+
+            // T23 destroy the dot
+            Destroy(col.gameObject);
+        }
+
+        // T23 if pacman hits something, with the tag, Ghost
+        if (col.gameObject.tag == "Ghost")
+        {
+            // get the name of the ghost, pacman collided with
+            String ghostName = col.GetComponent<Collider2D>().gameObject.name;
+
+            // get the audiosource so we can turn it (the audiosource) off, when pacman dies
+            AudioSource audioSource = soundManager.GetComponent<AudioSource>();
+
+            // if we collided with the red ghost
+            if (ghostName == "RedGhost")
+            {
+                // and if the ghost is dark blue
+                if (redGhostScript.isGhostBlue)
+                {
+                    // reset the redGhost in the cell, it was killed, pass in thepacman game object
+                    redGhostScript.ResetGhostAfterEaten(gameObject);
+
+                    // play the ghost being eaten sound
+                    SoundManager.Instance.PlayOneShot(SoundManager.Instance.eatingGhost);
+
+                    // increase Score for killed redGhost
+                    IncreaseTextUIScore(200);
+                }
+                else
+                {
+                    // play the ghost being eaten sound
+                    SoundManager.Instance.PlayOneShot(SoundManager.Instance.pacmanDies);
+
+                    // shut off all audio sources
+                    audioSource.Stop();
+
+                    // destroy pacman object
+                    Destroy(gameObject);
+                }
+            }
+            // if we collided with the red ghost
+            else if (ghostName == "PinkGhost")
+            {
+                // and if the ghost is dark blue
+                if (pinkGhostScript.isGhostBlue)
+                {
+                    // reset the redGhost in the cell, it was killed, pass in thepacman game object
+                    pinkGhostScript.ResetGhostAfterEaten(gameObject);
+
+                    // play the ghost being eaten sound
+                    SoundManager.Instance.PlayOneShot(SoundManager.Instance.eatingGhost);
+
+                    // increase Score for killed redGhost
+                    IncreaseTextUIScore(400);
+                }
+                else
+                {
+                    // play the ghost being eaten sound
+                    SoundManager.Instance.PlayOneShot(SoundManager.Instance.pacmanDies);
+
+                    // shut off all audio sources
+                    audioSource.Stop();
+
+                    // destroy pacman object
+                    Destroy(gameObject);
+                }
+            }
+
+            // if we collided with the blue ghost
+            if (ghostName == "BlueGhost")
+            {
+                // and if the ghost is dark blue
+                if (blueGhostScript.isGhostBlue)
+                {
+                    // reset the redGhost in the cell, it was killed, pass in thepacman game object
+                    blueGhostScript.ResetGhostAfterEaten(gameObject);
+
+                    // play the ghost being eaten sound
+                    SoundManager.Instance.PlayOneShot(SoundManager.Instance.eatingGhost);
+
+                    // increase Score for killed redGhost
+                    IncreaseTextUIScore(600);
+                }
+                else
+                {
+                    // play the ghost being eaten sound
+                    SoundManager.Instance.PlayOneShot(SoundManager.Instance.pacmanDies);
+
+                    // shut off all audio sources
+                    audioSource.Stop();
+
+                    // destroy pacman object
+                    Destroy(gameObject);
+                }
+            }
+            // if we collided with the red ghost
+            if (ghostName == "OrangeGhost")
+            {
+                // and if the ghost is dark blue
+                if (orangeGhostScript.isGhostBlue)
+                {
+                    // reset the redGhost in the cell, it was killed, pass in thepacman game object
+                    orangeGhostScript.ResetGhostAfterEaten(gameObject);
+
+                    // play the ghost being eaten sound
+                    SoundManager.Instance.PlayOneShot(SoundManager.Instance.eatingGhost);
+
+                    // increase Score for killed redGhost
+                    IncreaseTextUIScore(200);
+                }
+                else
+                {
+                    // play the ghost being eaten sound
+                    SoundManager.Instance.PlayOneShot(SoundManager.Instance.pacmanDies);
+
+                    // shut off all audio sources
+                    audioSource.Stop();
+
+                    // destroy pacman object
+                    Destroy(gameObject);
+                }
+            }
         }
     }
 
@@ -504,8 +647,9 @@ public class MsPacman : MonoBehaviour
     // T20 When a Pill object was collided with
     void APillWasEaten(Collider2D col)
     {
-        // call another function to increase the score
-        IncreaseTextUIScore();
+        // T20 call another function to increase the score, when pill is collided with
+        // T23 pass 10 to IncreaseTextUIScore()
+        IncreaseTextUIScore(50);
 
         // destroy the game object pill MsPacman collided with
         Destroy(col.gameObject);
@@ -513,7 +657,9 @@ public class MsPacman : MonoBehaviour
 
 
     // T20 increase the score when a pill is collided with 'eaten'  'sniffed up'
-    void IncreaseTextUIScore()
+    //void IncreaseTextUIScore()
+    // T23 added, the ability to pass in the point values for the score
+    void IncreaseTextUIScore(int points)
     {
         // find the score UI component
         Text textUIComp = GameObject.Find("Score").GetComponent<Text>();
@@ -522,7 +668,7 @@ public class MsPacman : MonoBehaviour
         int score = int.Parse(textUIComp.text);
 
         // increment the score
-        score += 10;
+        score += points;
 
         // resave the updated score in the textUIComp score string
         textUIComp.text = score.ToString();

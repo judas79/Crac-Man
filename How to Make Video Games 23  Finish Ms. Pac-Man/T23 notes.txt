@@ -1,0 +1,146 @@
+How to Make Video Games 23 : Finish Ms. Pac-Man
+https://www.youtube.com/watch?v=lTvVJDo6jvM&list=PLGLfVvz_LVvSYnwKyw9xP5tEn7GSUWwZJ&index=23
+
+In this video we finish Ms. Pac-Man and learn how to do even more! 
+We’ll create and set up all 4 Ghosts, position Ghosts in the center cell, 
+return Ghosts after eaten, move Ghosts randomly, chase Ms. Pac-Man, 
+have Ghosts eat Ms. Pac-Man, update scores and a whole lot more.
+http://www.newthinktank.com/2017/08/make-video-games-23/
+
+
+**************************** setup other ghosts ***************************
+
+
+First, we will create prefabs, for our remaining three ghosts.
+We will go into our sprites, and drag the first ghost, of each color, one at a time,
+into our hierarchy, Ghosts empty.
+Then rename our ghost, to its colors name + Ghost.  'PinkGhost' is the first ones name.
+Then drag the ghost into our prefabs folder, and delete the ghost sprite, from hierarchy.
+Do that, for all three.
+
+Then drag the three ghost, into the hierarchy Ghosts empty, one at a time, from the prefab folder.
+
+Next, select those same thre ghosts, in hierarchy, and ad a RigidBody 2d, to them.
+settings for all three ghosts:
+Mass = .0001
+Gravity Scale = 0
+Collision detectionv = continous
+Constraints Freeze Rotation Z = checked
+
+Next, add a BoxCollider 2D to thos same three Ghosts.
+Settings for all three:
+is Trigger = checked
+Size X and Z bothe = .88
+
+Next, while those t=same three ghosts are selected, drag your Ghost.cs script into the components area.
+In the Ghost script area, settings:
+speed = 3
+
+Also, change the speed for the RedGhost, to 3, as well.
+
+Next, we will select each of the PinkGhost, BlueGhost and Orange Ghost, one at a time,
+then drag the corresponding Sprite, as far as color and the direction it is looking in,
+into our Ghosts.cs, settings area.
+For the OrangeGhost, the went in this order:
+Look left = spriteSheet_4
+Look right = spriteSheet_5
+Look down = spriteSheet_7
+Look up = spriteSheet_6
+
+Do the same for the other two, using thier ghost color and eyes direction of view.
+
+Then also drag in the Dark Blue ghost, into it Blue Ghost field, for all three.
+
+Next, tag all three ghost, with the Ghost tag, in the dropdown, in settings.
+Verify that the RedGhost is also tagged with the Ghost tag.
+
+Next, double click the Ghost.cs script, and we will continue in VS...
+
+After saving, and returning to Unity, aft creating wait times for the ghost to start,
+and also then restart after being eaten, we will first select the RedGhost.
+
+
+********************************* setup Ghost properties *********************************
+
+
+In its, new properties, within the Ghost script in settings:
+Start Wait Time = 2
+
+PinkGhost:
+Start Wait Time = 5
+
+BlueGhost:
+Start Wait Time = 10
+
+OrangeGhost:
+Start Wait Time = 15
+
+Next, we will continue setting up for the Ghost, by cutting everingthing in our Start() function,
+and move it into its own function, named 'StartMoving' which we will invoke, with Start().
+We will also setup the starting position properties, for our Ghost, within the cell, in the middle of the game.
+So continue in Ghost.cs within VS....
+
+After saving, and returning from VS, we will change the starting positions, for all of our ghost.
+We will also set all our cell positions, so that the ghosts are not siting on a Point
+RedGhost Settings:
+Position x = 12
+Position y = 16
+Cell X Pos = 11.5
+Cell Y Pos = 15.5
+
+PinkGhost Settings:
+Position x = 13
+Position y = 16
+Cell X Pos = 12.5
+Cell Y Pos = 15.5
+
+BlueGhost Settings:
+Position x = 14
+Position y = 16
+Cell X Pos = 13.5
+Cell Y Pos = 15.5
+
+OrangeGhost Settings:
+Position x = 15
+Position y = 16
+Cell X Pos = 14.5
+Cell Y Pos = 15.5
+
+Next, run the game to verify the ghosts work as expected.
+
+Next, in Unity we will set the Destination Indexes, for the 4 Ghosts.
+0 is the Top Left,    'new Vector2( 1, 29)'
+2 is the bottom left,  'new Vector2( 26, 1 ),
+
+ReGhost:
+Destination = 0
+PinkGhost
+Destination = 2
+BlueGhost
+Destination = 0
+OrangeGhost
+Destination = 2
+
+Run the game to see if the ghosts go in different directions, when they start.
+
+Next, in Ghost.cs, we will make, 'bool isGhostBlue = false;' public, so we can have access to the change of color,
+and, that it can be eaten, when blue.  Then reset and get moving again, but now chase down pacman,
+instead of randomly roaming the screen.
+
+After saving and returning from setting up our ghost to do, after being killed,
+we will set up how the ghost will go after pacman.
+
+
+*********************************** Scoring, and ghosts chase pacman *********************************
+
+
+First, we will assign an int, to pass in the score values, dependant on if its dots, Pills or ghosts,
+into the IncreaseTextUIScore() function.
+Next, we will set it up, how the ghosts will track and hunt down pacman.
+Continue in the MsPacman.cs, in VS.....
+
+After saving and returning to Unity, run to verify it all works.
+
+SUCCESS!
+
+the end

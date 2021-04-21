@@ -58,10 +58,22 @@ public class Ghost : MonoBehaviour
 
     // T22 track To See if our ghost is blue, or not, 
     // so sprite animations are not called if ghost is blue, and makes a turn
-    bool isGhostBlue = false;
+    //bool isGhostBlue = false;
+    // T23 made public, so we can have access to when it is blue, or not
+    public bool isGhostBlue = false;
 
     // T22 store the blue version of our ghost
     public Sprite blueGhost;
+
+    // T23 for the wait time, before ghost start comming out, and move about the screen
+    public float startWaitTime = 0;
+
+    // T23 wait time, after ghost has been eaten, the comes out on the screen again
+    public float waitTimeAfterEaten = 4f;
+
+    // T23 define where th ghost are located, before they start, (in the central cell box)
+    public float CellXPos = 0;
+    public float CellYPos = 0;
 
     // T21 Add Rigidbody to Ghosts, before they start being used
     void Awake()
@@ -74,23 +86,36 @@ public class Ghost : MonoBehaviour
         sr = gameObject.GetComponent<SpriteRenderer>();
     }
 
-    // T21 Start is called before the first frame update
-    // get the x of the destination turning point at the start
+    // T23 Invoke ghosts, to start them at different times
     void Start()
     {
-        // have option of the ghost going left or right, when it first comes on the screen
+        // T23 ghosts starting time specified in Unity property settings, startWaitTime
+        // to start different ghost a specified time.
+        Invoke("StartMoving", startWaitTime);
+    }
+
+    // T23 everything in the Start() function was moved into this function, including comments
+    // the position where the ghosts start was added this lesson
+    // T21 Start is called before the first frame update
+    // get the x of the destination turning point at the start
+    void StartMoving()
+    {
+        // T23 position where the ghosts will start moving, within the maze, but not on top of a Point
+        transform.position = new Vector2(13.5f, 18.5f);
+
+        // T21 have option of the ghost going left or right, when it first comes on the screen
         float xDest = destinations[destinationIndex].x;
 
-        // If Ghost x pos > destination x
+        // T21 If Ghost x pos > destination x
         if (transform.position.x > xDest)
         {
 
-            // Move the Ghost left
+            // T21 Move the Ghost left
             rb.velocity = new Vector2(-1, 0) * speed;
         }
         else
         {
-            // Move the Ghost right
+            // T21 Move the Ghost right
             rb.velocity = new Vector2(1, 0) * speed;
         }
 
@@ -121,13 +146,13 @@ public class Ghost : MonoBehaviour
             {
                 // T22 change the sprite associated with our redghost
                 // if the ghost is moving to the right, left, up, or down
-                if(moveVect == Vector2.right)
+                if (moveVect == Vector2.right)
                 {
                     // T21 Changes the direction of the Ghost
                     rb.velocity = moveVect * speed;
 
                     // T22 default IsGhostBlue is false, So if ghost is not blue, we can use our sprite animation
-                    if(!isGhostBlue)
+                    if (!isGhostBlue)
                     {
                         sr.sprite = lookRightSprite;
                     }
@@ -200,6 +225,50 @@ public class Ghost : MonoBehaviour
         }
     }
 
+
+    // T23 setup our pacman, so it can, have the ability of being eaten, later, in the following two functions.
+    GameObject pacmanGO = null;
+
+    // T23 recieves the pacman game object
+    public void ResetGhostAfterEaten(GameObject pacman)
+    {
+        // move the ghosts to the predifined cell position, after eaten, in the cell
+        transform.position = new Vector2(CellXPos, CellYPos);
+
+        // make the ghost imobile, while in the cell
+        rb.velocity = Vector2.zero;
+
+        // assign the passed in pacman, to our pacman object, so we can use it outside of this function
+        pacmanGO = pacman;
+
+        // invoke the function for the ghosts to start comming out again, 
+        // after waiting 4 seconds (the value of waitTimeAfterEaten)
+        Invoke("StartMovingAfterEaten", waitTimeAfterEaten);
+    }
+
+    // T23 start moving the ghost again at thier start moving position
+    void StartMovingAfterEaten()
+    {
+        transform.position = new Vector2(13.5f, 18.5f);
+
+        // T21 have option of the ghost going left or right, when it first comes on the screen
+        float xDest = destinations[destinationIndex].x;
+
+        // T21 If Ghost x pos > destination x
+        if (transform.position.x > xDest)
+        {
+
+            // T21 Move the Ghost left
+            rb.velocity = new Vector2(-1, 0) * speed;
+        }
+        else
+        {
+            // T21 Move the Ghost right
+            rb.velocity = new Vector2(1, 0) * speed;
+        }
+    }
+
+
     // T21 this will handle all the ghosts movement, receive a vector2 and return a vector2
     Vector2 GetNewDirection(Vector2 pointVect)
     {
@@ -212,10 +281,16 @@ public class Ghost : MonoBehaviour
         pointVect.x = (float)Math.Floor(Convert.ToDouble(pointVect.x));
         pointVect.y = (float)Math.Floor(Convert.ToDouble(pointVect.y));
 
-        // get the destination that we want the ghost to go
+        // T21 get the destination that we want the ghost to go
         Vector2 dest = destinations[destinationIndex];
 
-        // see if the ghost reached his destination and if so incrment to go to the next destination
+        // T23 after pacman eatsghost, ghost now, go after pacman
+        if(pacmanGO != null)
+        {
+            dest = pacmanGO.transform.position;
+        }
+
+        // T21 see if the ghost reached his destination and if so incrment to go to the next destination
         // +1 because there is a discrpency between the onscreen grid and the array grid, of 1
         if (((pointVect.x + 1) == dest.x) && ((pointVect.y + 1) == dest.y))
         {
@@ -230,7 +305,13 @@ public class Ghost : MonoBehaviour
         // T21 we will also update our destinations
         dest = destinations[destinationIndex];
 
-        // Will hold the new direction Ms. Pac-Man will move to
+        // T23 after pacman eatsghost, ghost now, go after pacman
+        if (pacmanGO != null)
+        {
+            dest = pacmanGO.transform.position;
+        }
+
+        // T21 Will hold the new direction Ms. Pac-Man will move to
         // setup so if the vector is 2, that we will be notified above in the OnTrigger function
         Vector2 newDir = new Vector2(2, 0);
 

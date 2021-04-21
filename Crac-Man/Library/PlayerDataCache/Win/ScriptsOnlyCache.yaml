@@ -239,7 +239,7 @@ ScriptsOnlyBuild:
     className: PhysicsRaycaster
   - hash:
       serializedVersion: 2
-      Hash: c83e9a56a7d63d3171d28008ee63b4f5
+      Hash: 59a94c8dccad6eca9729fdf8329fa9ad
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Ghost
@@ -624,5 +624,5 @@ ScriptsOnlyBuild:
   platform: 5
   scenePathNames:
   - Assets/Scenes/MainScene.unity
-  playerPath: C:/Users/judas/Documents/Unity/Crac-Man/How to Make Video Games 22/T22
-    game so far compiled for windows/Crac-Man.exe
+  playerPath: C:/Users/judas/Documents/Unity/Crac-Man/How to Make Video Games 23 
+    Finish Ms. Pac-Man/T23 Crac-Man compiled for windows/Crac-Man.exe
